@@ -22,6 +22,7 @@ import { NotFound } from './NotFound'
 import DraftingTable from '@/prototypes/paris-drafting-table/DraftingTable'
 import DraftingTableV2 from '@/prototypes/paris-drafting-table/DraftingTableV2'
 import { ProductPlacement, Console, AdvertiserConsole } from '@/console'
+import PasswordGate from '@/components/PasswordGate'
 
 export const router = createBrowserRouter([
   {
@@ -38,7 +39,15 @@ export const router = createBrowserRouter([
   },
   {
     path: '/advertiser',
-    element: <AdvertiserConsole />,
+    element: (
+      <PasswordGate
+        theme="warm"
+        title="Advertiser Console"
+        subtitle="Enter password to access the campaign tools"
+      >
+        <AdvertiserConsole />
+      </PasswordGate>
+    ),
   },
   {
     path: '/consumer',

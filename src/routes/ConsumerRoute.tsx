@@ -9,13 +9,22 @@
  */
 
 import ConsumerGallery from '@/components/ConsumerGallery'
+import PasswordGate from '@/components/PasswordGate'
 
 interface ConsumerRouteProps {
   debugMode?: boolean
 }
 
 export function ConsumerRoute({ debugMode = false }: ConsumerRouteProps) {
-  return <ConsumerGallery debugMode={debugMode} />
+  return (
+    <PasswordGate
+      theme="dark"
+      title="Consumer Preview"
+      subtitle="Enter password to view the demo"
+    >
+      <ConsumerGallery debugMode={debugMode} />
+    </PasswordGate>
+  )
 }
 
 export default ConsumerRoute

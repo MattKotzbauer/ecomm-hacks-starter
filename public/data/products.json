@@ -1,0 +1,133 @@
+{
+  "collections": [
+    {
+      "id": "prada",
+      "name": "prada",
+      "displayName": "PRADA",
+      "products": [
+        {
+          "id": "prada-1",
+          "name": "Galleria Bag",
+          "img": "/prototype-assets/products/prada-1.jpg",
+          "description": "Classic saffiano leather handbag with iconic triangle logo",
+          "targeting": {
+            "demographics": ["25-34", "35-44"],
+            "interests": ["Fashion", "Luxury", "Art"],
+            "scenes": ["Boutique", "Café", "Gallery", "Interior"],
+            "semantic": "sophisticated urban settings, warm lighting, minimalist aesthetics"
+          }
+        },
+        {
+          "id": "prada-2",
+          "name": "Re-Edition",
+          "img": "/prototype-assets/products/prada-2.jpg",
+          "description": "Regenerated nylon shoulder bag, Y2K inspired",
+          "targeting": {
+            "demographics": ["18-24", "25-34"],
+            "interests": ["Fashion", "Lifestyle", "Minimalist"],
+            "scenes": ["Street", "Café", "Lifestyle"],
+            "semantic": "contemporary urban scenes, casual sophisticated vibes"
+          }
+        },
+        {
+          "id": "prada-3",
+          "name": "Cleo Shoulder",
+          "img": "/prototype-assets/products/prada-3.jpg",
+          "description": "Brushed leather hobo bag with sleek silhouette",
+          "targeting": {
+            "demographics": ["25-34", "35-44"],
+            "interests": ["Fashion", "Luxury", "Art"],
+            "scenes": ["Gallery", "Boutique", "Interior"],
+            "semantic": "elegant settings, artistic environments, refined spaces"
+          }
+        }
+      ]
+    },
+    {
+      "id": "lv",
+      "name": "lv",
+      "displayName": "LOUIS VUITTON",
+      "products": [
+        {
+          "id": "lv-1",
+          "name": "Neverfull MM",
+          "img": "/prototype-assets/products/lv-1.jpg",
+          "description": "Iconic monogram canvas tote bag",
+          "targeting": {
+            "demographics": ["25-34", "35-44", "45+"],
+            "interests": ["Luxury", "Travel", "Lifestyle"],
+            "scenes": ["Interior", "Café", "Street", "Outdoor"],
+            "semantic": "classic luxury settings, travel moments, everyday elegance"
+          }
+        },
+        {
+          "id": "lv-2",
+          "name": "Keepall 45",
+          "img": "/prototype-assets/products/lv-2.jpg",
+          "description": "Legendary travel duffle in monogram canvas",
+          "targeting": {
+            "demographics": ["25-34", "35-44", "45+"],
+            "interests": ["Luxury", "Travel"],
+            "scenes": ["Interior", "Outdoor", "Lifestyle"],
+            "semantic": "travel scenes, luxury hospitality, adventure with style"
+          }
+        },
+        {
+          "id": "lv-3",
+          "name": "Capucines",
+          "img": "/prototype-assets/products/lv-3.jpg",
+          "description": "Refined leather handbag with LV signature",
+          "targeting": {
+            "demographics": ["35-44", "45+"],
+            "interests": ["Luxury", "Fashion", "Art"],
+            "scenes": ["Boutique", "Gallery", "Interior"],
+            "semantic": "high-end environments, museum quality spaces, refined interiors"
+          }
+        }
+      ]
+    },
+    {
+      "id": "acne",
+      "name": "acne",
+      "displayName": "ACNE STUDIOS",
+      "products": [
+        {
+          "id": "acne-1",
+          "name": "Musubi Bag",
+          "img": "/prototype-assets/products/acne-1.jpg",
+          "description": "Knotted leather shoulder bag, Scandinavian minimalism",
+          "targeting": {
+            "demographics": ["18-24", "25-34"],
+            "interests": ["Fashion", "Art", "Minimalist"],
+            "scenes": ["Gallery", "Café", "Street"],
+            "semantic": "minimalist spaces, contemporary art settings, Nordic aesthetics"
+          }
+        },
+        {
+          "id": "acne-2",
+          "name": "Wool Scarf",
+          "img": "/prototype-assets/products/acne-2.jpg",
+          "description": "Oversized chunky knit wool scarf",
+          "targeting": {
+            "demographics": ["18-24", "25-34", "35-44"],
+            "interests": ["Fashion", "Lifestyle", "Minimalist"],
+            "scenes": ["Street", "Outdoor", "Café"],
+            "semantic": "cozy winter scenes, urban outdoor moments, casual sophistication"
+          }
+        },
+        {
+          "id": "acne-3",
+          "name": "Jensen Boots",
+          "img": "/prototype-assets/products/acne-3.jpg",
+          "description": "Pointed toe ankle boots, timeless design",
+          "targeting": {
+            "demographics": ["18-24", "25-34"],
+            "interests": ["Fashion", "Art", "Lifestyle"],
+            "scenes": ["Street", "Gallery", "Café", "Boutique"],
+            "semantic": "urban street style, artistic settings, modern city life"
+          }
+        }
+      ]
+    }
+  ]
+}

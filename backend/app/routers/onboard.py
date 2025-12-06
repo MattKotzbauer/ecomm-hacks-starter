@@ -57,7 +57,7 @@ async def onboard(
 
         # Load and fill the prompt template
         prompt = load_and_fill_prompt(
-            "onboard",
+            "base_onboard",
             conversation_history=format_history(history),
             user_message=request_data.message,
         )

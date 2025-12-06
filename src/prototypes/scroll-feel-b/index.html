@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallax Depth - Ephemeral</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #FAF8F3;
+            --sepia: #8b7355;
+            --pencil: #4a4a48;
+            --shadow: rgba(74, 74, 72, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--pencil);
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 2rem;
+            background: rgba(250, 248, 243, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(139, 115, 85, 0.1);
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            color: var(--sepia);
+        }
+
+        .parallax-container {
+            position: relative;
+            min-height: 500vh;
+            padding-top: 150px;
+        }
+
+        .layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            will-change: transform;
+        }
+
+        /* Layer 1: Background (slowest, smallest, blurred) */
+        .layer-1 {
+            z-index: 1;
+        }
+
+        .layer-1 .card {
+            transform: scale(0.75);
+            filter: blur(3px);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        /* Layer 2: Middle */
+        .layer-2 {
+            z-index: 2;
+        }
+
+        .layer-2 .card {
+            transform: scale(0.88);
+            filter: blur(1px);
+            box-shadow: 0 12px 32px var(--shadow);
+        }
+
+        /* Layer 3: Foreground (fastest, largest, sharpest) */
+        .layer-3 {
+            z-index: 3;
+        }
+
+        .layer-3 .card {
+            transform: scale(1);
+            filter: none;
+            box-shadow: 0 16px 48px var(--shadow);
+        }
+
+        .card {
+            position: absolute;
+            width: 320px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.05) translateY(-8px) !important;
+            box-shadow: 0 24px 64px rgba(74, 74, 72, 0.2) !important;
+            filter: none !important;
+            z-index: 999;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg,
+                rgba(139, 115, 85, 0.2),
+                rgba(139, 115, 85, 0.4));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(139, 115, 85, 0.05) 10px,
+                rgba(139, 115, 85, 0.05) 20px
+            );
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-brand {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--sepia);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .card-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--pencil);
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+
+        .card-price {
+            font-size: 1.125rem;
+            color: var(--sepia);
+            font-weight: 500;
+        }
+
+        /* Positioning cards in staggered grid */
+        .card:nth-child(1) { top: 0px; left: 10%; }
+        .card:nth-child(2) { top: 400px; left: 55%; }
+        .card:nth-child(3) { top: 800px; left: 25%; }
+        .card:nth-child(4) { top: 1200px; left: 65%; }
+        .card:nth-child(5) { top: 1600px; left: 15%; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ephemeral</h1>
+    </header>
+
+    <div class="parallax-container">
+        <div class="layer layer-1" data-speed="0.3"></div>
+        <div class="layer layer-2" data-speed="0.6"></div>
+        <div class="layer layer-3" data-speed="1"></div>
+    </div>
+
+    <script>
+        // Sepia color palette for placeholder boxes
+        const sepiaPalette = [
+            'linear-gradient(135deg, rgba(139, 115, 85, 0.3), rgba(139, 115, 85, 0.5))',
+            'linear-gradient(135deg, rgba(160, 132, 98, 0.3), rgba(160, 132, 98, 0.5))',
+            'linear-gradient(135deg, rgba(118, 98, 72, 0.3), rgba(118, 98, 72, 0.5))',
+            'linear-gradient(135deg, rgba(145, 120, 90, 0.3), rgba(145, 120, 90, 0.5))',
+            'linear-gradient(135deg, rgba(130, 108, 80, 0.3), rgba(130, 108, 80, 0.5))'
+        ];
+
+        // Fetch and render products
+        async function loadProducts() {
+            try {
+                const response = await fetch('/gallery/manifest.json');
+                const products = await response.json();
+
+                // Get the three layer containers
+                const layers = document.querySelectorAll('.layer');
+
+                // Distribute products across 3 layers (round-robin)
+                products.forEach((item, index) => {
+                    const layerIndex = index % 3;
+                    const card = createCard(item.product, index);
+                    layers[layerIndex].appendChild(card);
+                });
+
+            } catch (error) {
+                console.error('Failed to load products:', error);
+            }
+        }
+
+        function createCard(product, index) {
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            const colorIndex = index % sepiaPalette.length;
+
+            card.innerHTML = `
+                <div class="card-image" style="background: ${sepiaPalette[colorIndex]}"></div>
+                <div class="card-content">
+                    <div class="card-brand">${product.brand}</div>
+                    <div class="card-name">${product.name}</div>
+                    <div class="card-price">$${product.price.toLocaleString()}</div>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Parallax scroll effect
+        function parallaxScroll() {
+            const scrolled = window.pageYOffset;
+            const layers = document.querySelectorAll('.layer');
+
+            layers.forEach(layer => {
+                const speed = parseFloat(layer.dataset.speed);
+                const yPos = -(scrolled * speed);
+                layer.style.transform = `translateY(${yPos}px)`;
+            });
+        }
+
+        // Smooth scroll with requestAnimationFrame
+        let ticking = false;
+
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    parallaxScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // Initialize
+        loadProducts();
+        parallaxScroll(); // Initial position
+    </script>
+</body>
+</html>

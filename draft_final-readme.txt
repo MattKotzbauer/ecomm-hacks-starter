@@ -375,6 +375,32 @@ GEMINI_API_KEY=your_api_key_here
 
 ---
 
+## Current Limitations
+
+### Generation Latency
+
+The 5-step AI pipeline (scene generation → image creation → product selection → composition → mask generation) currently takes **60-90 seconds** to generate a batch of 3 placements:
+
+| Step | Time |
+|------|------|
+| Scene descriptions | ~20s |
+| Base image generation | ~8s |
+| Product selection | ~26s |
+| Product composition | ~13s |
+| Mask generation | ~12s |
+| **Total** | **~80s** |
+
+**This is by design.** Reverie is built for contemplation, not consumption. The UI embraces this latency:
+
+- **Infinite scroll pattern** — New scenes generate as you approach the bottom, loading in the background while you explore what's already there
+- **Drift animation** — Cards slowly float across the canvas, giving the AI time to prepare the next batch
+- **Writing pane as buffer** — Users naturally spend time reflecting and writing, during which generation happens invisibly
+- **"More of what you like"** — The continuation/exploration split means users see familiar aesthetics while new directions render
+
+The slow pace isn't a bug—it's philosophically aligned with our vision of taste as a practice, not a transaction. Pinterest trained users to scroll fast; we're training them to linger.
+
+---
+
 ## Screenshots
 
 [Screenshots to be added]

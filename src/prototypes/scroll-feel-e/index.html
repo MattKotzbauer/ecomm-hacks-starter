@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accordion Focus - Ephemeral</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cream: #FAF8F3;
+      --sepia: #8b7355;
+      --pencil: #4a4a48;
+      --shadow: rgba(74, 74, 72, 0.12);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--pencil);
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 2rem 3rem;
+      background: linear-gradient(to bottom, var(--cream) 0%, var(--cream) 60%, transparent 100%);
+      pointer-events: none;
+    }
+
+    h1 {
+      font-family: 'Crimson Pro', serif;
+      font-size: 2.5rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      color: var(--pencil);
+      text-align: center;
+    }
+
+    /* Gallery Container */
+    .gallery {
+      padding: 10rem 0 50vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    /* Product Card */
+    .product-card {
+      width: 90%;
+      max-width: 800px;
+      position: relative;
+      transition: transform 0.4s cubic-bezier(0.33, 1, 0.68, 1),
+                  opacity 0.4s ease;
+      transform-origin: center center;
+      will-change: transform, opacity;
+    }
+
+    .card-inner {
+      background: white;
+      border-radius: 2px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Placeholder Image */
+    .card-image {
+      width: 100%;
+      height: 400px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.5rem;
+      color: white;
+      letter-spacing: 0.1em;
+    }
+
+    /* Product Info */
+    .card-content {
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-brand {
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--sepia);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .product-name {
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.75rem;
+      font-weight: 400;
+      color: var(--pencil);
+      margin-bottom: 0.25rem;
+    }
+
+    .product-description {
+      font-size: 0.875rem;
+      color: rgba(74, 74, 72, 0.6);
+      margin-top: 0.5rem;
+    }
+
+    .product-price {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--pencil);
+      white-space: nowrap;
+      margin-left: 2rem;
+    }
+
+    /* Color palette for placeholders */
+    .placeholder-0 { background: linear-gradient(135deg, #d4a373 0%, #b8926a 100%); }
+    .placeholder-1 { background: linear-gradient(135deg, #c19a6b 0%, #a08058 100%); }
+    .placeholder-2 { background: linear-gradient(135deg, #8b7355 0%, #6d5a43 100%); }
+    .placeholder-3 { background: linear-gradient(135deg, #b89968 0%, #9a7d51 100%); }
+    .placeholder-4 { background: linear-gradient(135deg, #a6825c 0%, #8a6847 100%); }
+    .placeholder-5 { background: linear-gradient(135deg, #c4a573 0%, #a88d5f 100%); }
+    .placeholder-6 { background: linear-gradient(135deg, #9d8569 0%, #7e6a51 100%); }
+    .placeholder-7 { background: linear-gradient(135deg, #b59f7f 0%, #9a8565 100%); }
+    .placeholder-8 { background: linear-gradient(135deg, #8d7761 0%, #705d4b 100%); }
+    .placeholder-9 { background: linear-gradient(135deg, #c2a078 0%, #a38460 100%); }
+    .placeholder-10 { background: linear-gradient(135deg, #9b8268 0%, #7d6750 100%); }
+    .placeholder-11 { background: linear-gradient(135deg, #b8956b 0%, #987a56 100%); }
+    .placeholder-12 { background: linear-gradient(135deg, #a48d6f 0%, #867256 100%); }
+
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.25rem;
+      color: var(--sepia);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 1.5rem 1.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .gallery {
+        padding: 8rem 0 50vh;
+        gap: 1.5rem;
+      }
+
+      .product-card {
+        width: 95%;
+      }
+
+      .card-image {
+        height: 300px;
+      }
+
+      .card-content {
+        padding: 1.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .product-price {
+        margin-left: 0;
+      }
+
+      .product-name {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Ephemeral</h1>
+  </header>
+
+  <div class="gallery" id="gallery">
+    <div class="loading">Loading gallery...</div>
+  </div>
+
+  <script>
+    // Configuration
+    const SCALE_RANGE = 0.3; // Scale range: 0.7 to 1.0
+    const OPACITY_MIN = 0.5;
+    const MANIFEST_URL = '/gallery/manifest.json';
+
+    // State
+    let products = [];
+    let cards = [];
+
+    // Utility: Format price
+    function formatPrice(price, currency) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: currency
+      }).format(price);
+    }
+
+    // Load products from manifest
+    async function loadProducts() {
+      try {
+        const response = await fetch(MANIFEST_URL);
+        if (!response.ok) throw new Error('Failed to load manifest');
+        products = await response.json();
+        renderGallery();
+        initScrollEffect();
+      } catch (error) {
+        console.error('Error loading products:', error);
+        document.getElementById('gallery').innerHTML =
+          '<div class="loading">Error loading gallery. Please refresh.</div>';
+      }
+    }
+
+    // Render gallery cards
+    function renderGallery() {
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+
+      products.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="card-inner">
+            <div class="card-image">
+              <div class="placeholder placeholder-${index}">
+                ${item.product.brand}
+              </div>
+            </div>
+            <div class="card-content">
+              <div class="product-info">
+                <div class="product-brand">${item.product.brand}</div>
+                <div class="product-name">${item.product.name}</div>
+                <div class="product-description">${item.product.description}</div>
+              </div>
+              <div class="product-price">
+                ${formatPrice(item.product.price, item.product.currency)}
+              </div>
+            </div>
+          </div>
+        `;
+        gallery.appendChild(card);
+        cards.push(card);
+      });
+    }
+
+    // Initialize scroll effect
+    function initScrollEffect() {
+      updateCardScales();
+
+      // Throttle scroll event for performance
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            updateCardScales();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      });
+    }
+
+    // Update card scales based on scroll position
+    function updateCardScales() {
+      const viewportCenter = window.innerHeight / 2;
+
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+
+        // Distance from viewport center
+        const distance = Math.abs(cardCenter - viewportCenter);
+
+        // Normalize distance (0 = at center, 1 = far away)
+        // Use viewport height as the range
+        const normalizedDistance = Math.min(distance / (window.innerHeight * 0.8), 1);
+
+        // Calculate scale: 1.0 at center, 0.7 far away
+        const scale = 1.0 - (normalizedDistance * SCALE_RANGE);
+
+        // Calculate opacity: 1.0 at center, 0.5 far away
+        const opacity = 1.0 - (normalizedDistance * (1 - OPACITY_MIN));
+
+        // Apply transforms
+        card.style.transform = `scale(${scale})`;
+        card.style.opacity = opacity;
+      });
+    }
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', loadProducts);
+  </script>
+</body>
+</html>

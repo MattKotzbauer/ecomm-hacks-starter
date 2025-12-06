@@ -1,0 +1,292 @@
+/**
+ * DynamicPlacementPanel Styles
+ * Matches Console.css warm cream/bronze aesthetic
+ */
+
+.dynamic-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #faf8f5;
+}
+
+.dynamic-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e8e4de;
+}
+
+.dynamic-panel-header h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: #2d2a26;
+  margin: 0;
+}
+
+.liked-count {
+  font-size: 12px;
+  color: #c9a86a;
+  background: rgba(201, 168, 106, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+/* Phase indicator */
+.dynamic-phase-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: rgba(201, 168, 106, 0.08);
+  border-bottom: 1px solid #e8e4de;
+  font-size: 13px;
+  color: #8b7355;
+}
+
+.dynamic-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #e8e4de;
+  border-top-color: #c9a86a;
+  border-radius: 50%;
+  animation: dynamic-spin 0.8s linear infinite;
+}
+
+@keyframes dynamic-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error message */
+.dynamic-error {
+  padding: 12px 24px;
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+/* Content area */
+.dynamic-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* Empty state */
+.dynamic-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 40px;
+}
+
+.dynamic-empty-state h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: #2d2a26;
+  margin: 0 0 12px;
+}
+
+.dynamic-empty-state p {
+  font-size: 14px;
+  color: #8b7355;
+  margin: 0 0 24px;
+  max-width: 280px;
+}
+
+/* Grid */
+.dynamic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* Card */
+.dynamic-card {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  aspect-ratio: 4/5;
+}
+
+.dynamic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.dynamic-card.liked {
+  box-shadow: 0 0 0 2px #c9a86a, 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.dynamic-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Product highlight overlay */
+.dynamic-card-highlight {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.4);
+  mask-size: cover;
+  -webkit-mask-size: cover;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+/* Badge */
+.dynamic-card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 8px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+}
+
+.dynamic-card-badge.continuation {
+  background: rgba(201, 168, 106, 0.9);
+  color: #fff;
+}
+
+.dynamic-card-badge.exploration {
+  background: rgba(45, 42, 38, 0.8);
+  color: #fff;
+}
+
+/* Liked indicator */
+.dynamic-card-liked {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #c9a86a;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Info overlay */
+.dynamic-card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 12px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.6));
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.dynamic-card:hover .dynamic-card-info {
+  opacity: 1;
+}
+
+.dynamic-card-product {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.dynamic-card-mood {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: capitalize;
+}
+
+/* Double-click hint */
+.dynamic-card-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.dynamic-card:hover .dynamic-card-hint {
+  opacity: 0.8;
+}
+
+/* Loading more */
+.dynamic-loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  color: #8b7355;
+  font-size: 13px;
+}
+
+/* Footer */
+.dynamic-panel-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #e8e4de;
+  background: #fff;
+}
+
+.dynamic-count {
+  font-size: 13px;
+  color: #8b7355;
+}
+
+/* Buttons */
+.dynamic-generate-btn {
+  background: #c9a86a;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.dynamic-generate-btn:hover:not(:disabled) {
+  background: #b89758;
+}
+
+.dynamic-generate-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.dynamic-generate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dynamic-generate-btn.secondary {
+  background: transparent;
+  color: #c9a86a;
+  border: 1px solid #c9a86a;
+}
+
+.dynamic-generate-btn.secondary:hover:not(:disabled) {
+  background: rgba(201, 168, 106, 0.1);
+}

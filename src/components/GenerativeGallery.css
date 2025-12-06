@@ -1,0 +1,318 @@
+/**
+ * GenerativeGallery-specific styles
+ * (Extends ConsumerGallery.css)
+ */
+
+/* === Skeleton Loading Cards === */
+
+.skeleton-card {
+  background: rgba(40, 38, 35, 0.8);
+  border-radius: 12px;
+  overflow: hidden;
+  position: absolute;
+  transform: translate(-50%, 0);
+}
+
+.skeleton-shimmer {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(60, 58, 55, 0.3) 0%,
+    rgba(80, 78, 75, 0.5) 50%,
+    rgba(60, 58, 55, 0.3) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite ease-in-out;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* === Generation Indicator === */
+
+.generation-indicator {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  background: rgba(30, 28, 26, 0.95);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 24px;
+  color: #e8e4d9;
+  font-size: 14px;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.generation-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(201, 162, 39, 0.3);
+  border-top-color: #c9a227;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* === Generation Gate with Progress Bar === */
+
+.generation-gate {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background: rgba(30, 28, 26, 0.95);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  min-width: 280px;
+  z-index: 1000;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+}
+
+.gate-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.gate-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c9a227, #e8c547);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.gate-status {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 13px;
+  color: #e8e4d9;
+}
+
+.gate-step {
+  opacity: 0.8;
+}
+
+.gate-percent {
+  color: #c9a227;
+  font-weight: 500;
+}
+
+/* === Generation Error === */
+
+.generation-error {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 24px;
+  background: rgba(180, 60, 60, 0.9);
+  border-radius: 24px;
+  color: white;
+  font-size: 14px;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+}
+
+.generation-error button {
+  padding: 6px 16px;
+  background: white;
+  color: #b43c3c;
+  border: none;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.generation-error button:hover {
+  transform: scale(1.05);
+}
+
+/* === Like Button === */
+
+.like-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition: all 0.2s ease;
+  opacity: 0;
+  z-index: 10;
+}
+
+.gallery-card:hover .like-button,
+.expanded-card .like-button {
+  opacity: 1;
+}
+
+.like-button:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.like-button.liked {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.2);
+}
+
+.like-button.liked:hover {
+  background: rgba(231, 76, 60, 0.3);
+}
+
+.like-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* === Scene Info Overlay === */
+
+.scene-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24px 12px 12px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.scene-mood {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(201, 162, 39, 0.9);
+  color: #1e1c1a;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 12px;
+}
+
+/* === Scene Badge (Expanded View) === */
+
+.scene-badge {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+
+.scene-badge .scene-mood {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.scene-badge .scene-type {
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: capitalize;
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+}
+
+/* === Expanded Card Enhancements === */
+
+.expanded-card .like-button {
+  top: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  opacity: 1;
+}
+
+.expanded-card .like-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+/* === GenerativeGallery Container === */
+
+.generative-gallery .gallery-container {
+  /* Ensure cards render above generation indicator */
+}
+
+/* === Writing Pane Enhancement === */
+
+.generative-gallery .writing-pane-container {
+  /* Hint that text influences generation */
+}
+
+.generative-gallery .writing-pane-container textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* === Responsive Adjustments === */
+
+@media (max-width: 768px) {
+  .generation-indicator {
+    bottom: 16px;
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .like-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .like-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .scene-badge {
+    bottom: 12px;
+    left: 12px;
+  }
+
+  .scene-badge .scene-mood,
+  .scene-badge .scene-type {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}

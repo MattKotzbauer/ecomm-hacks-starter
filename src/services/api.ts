@@ -307,3 +307,98 @@ export async function styleChat(request: StyleRequest): Promise<StyleResponse> {
     throw handleNetworkError(error, 'Style')
   }
 }
+
+// --- Image Generation Types ---
+
+export interface ImageGenerateRequest {
+  prompt: string
+  model?: string
+}
+
+export interface GeneratedImage {
+  data: string // base64
+  mime_type: string
+  file_path: string | null // auto-saved path (e.g., "2024-12-06/img_143022_abc123.png")
+}
+
+export interface ImageGenerateResponse {
+  text: string | null
+  images: GeneratedImage[]
+  model: string
+  usage: Record<string, number> | null
+}
+
+export interface SavedImageInfo {
+  path: string
+  date: string
+  filename: string
+  size_bytes: number
+}
+
+export interface SavedImagesResponse {
+  images: SavedImageInfo[]
+  count: number
+}
+
+// --- Image API Functions ---
+
+/**
+ * Generate an image using Nano Banana Pro.
+ * Images are automatically saved to disk.
+ */
+export async function generateImage(request: ImageGenerateRequest): Promise<ImageGenerateResponse> {
+  try {
+    const response = await fetch(`${API_BASE}/api/image/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+    return handleResponse<ImageGenerateResponse>(response, 'Image generation')
+  } catch (error) {
+    throw handleNetworkError(error, 'Image generation')
+  }
+}
+
+/**
+ * List all saved generated images.
+ */
+export async function listSavedImages(): Promise<SavedImagesResponse> {
+  try {
+    const response = await fetch(`${API_BASE}/api/image/saved`)
+    return handleResponse<SavedImagesResponse>(response, 'List saved images')
+  } catch (error) {
+    throw handleNetworkError(error, 'List saved images')
+  }
+}
+
+/**
+ * Get URL for a saved image.
+ * @param path Relative path like "2024-12-06/img_143022_abc123.png"
+ */
+export function getSavedImageUrl(path: string): string {
+  return `${API_BASE}/api/image/saved/${path}`
+}
+
+export interface ImageEditRequest {
+  prompt: string
+  image: string // base64-encoded image data
+  mime_type?: string
+  model?: string
+}
+
+/**
+ * Edit an existing image using Nano Banana Pro.
+ * Images are automatically saved to disk.
+ */
+export async function editImage(request: ImageEditRequest): Promise<ImageGenerateResponse> {
+  try {
+    const response = await fetch(`${API_BASE}/api/image/edit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+    return handleResponse<ImageGenerateResponse>(response, 'Image editing')
+  } catch (error) {
+    throw handleNetworkError(error, 'Image editing')
+  }
+}

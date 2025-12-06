@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sticky Reveal - Scroll Prototype C</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cream: #FAF8F3;
+            --sepia: #8b7355;
+            --pencil: #4a4a48;
+            --shadow: rgba(74, 74, 72, 0.12);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--pencil);
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 3rem;
+            background: var(--cream);
+            z-index: 100;
+            border-bottom: 1px solid rgba(139, 115, 85, 0.15);
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            color: var(--sepia);
+        }
+
+        /* Progress Indicator */
+        .progress-bar {
+            position: fixed;
+            right: 3rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 101;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(139, 115, 85, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--sepia);
+            transform: scale(1.5);
+        }
+
+        /* Gallery Container */
+        .gallery {
+            padding-top: 120px;
+            position: relative;
+        }
+
+        /* Card Styling */
+        .card {
+            position: sticky;
+            height: 70vh;
+            margin-bottom: 200px; /* Gap for sticky release effect */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3rem;
+        }
+
+        /* Stagger sticky positions */
+        .card:nth-child(1) { top: 15vh; }
+        .card:nth-child(2) { top: 15vh; }
+        .card:nth-child(3) { top: 15vh; }
+        .card:nth-child(4) { top: 15vh; }
+        .card:nth-child(5) { top: 15vh; }
+        .card:nth-child(6) { top: 15vh; }
+        .card:nth-child(7) { top: 15vh; }
+        .card:nth-child(8) { top: 15vh; }
+
+        .card-inner {
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            background: white;
+            padding: 3rem;
+            border: 1px solid rgba(139, 115, 85, 0.15);
+            box-shadow: 0 20px 60px var(--shadow);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .card.exiting .card-inner {
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0.6;
+        }
+
+        /* Image Placeholder */
+        .card-image {
+            aspect-ratio: 3/4;
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .placeholder-box {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg,
+                var(--cream) 0%,
+                #e8dcc8 50%,
+                var(--sepia) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.2rem;
+            color: rgba(74, 74, 72, 0.4);
+            letter-spacing: 0.1em;
+        }
+
+        /* Content */
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--sepia);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .product-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+            color: var(--pencil);
+            margin-bottom: 1.5rem;
+        }
+
+        .price {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--sepia);
+            margin-bottom: 2rem;
+        }
+
+        .description {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(74, 74, 72, 0.7);
+            margin-bottom: 2rem;
+        }
+
+        .view-button {
+            align-self: flex-start;
+            padding: 0.75rem 2rem;
+            background: transparent;
+            border: 1px solid var(--sepia);
+            color: var(--sepia);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-button:hover {
+            background: var(--sepia);
+            color: white;
+        }
+
+        /* Color variations for placeholders */
+        .card:nth-child(1) .placeholder-box {
+            background: linear-gradient(135deg, #f5e6d3 0%, #d4c4b0 100%);
+        }
+        .card:nth-child(2) .placeholder-box {
+            background: linear-gradient(135deg, #e8dcc8 0%, var(--sepia) 100%);
+        }
+        .card:nth-child(3) .placeholder-box {
+            background: linear-gradient(135deg, #c4b5a0 0%, #8b7355 100%);
+        }
+        .card:nth-child(4) .placeholder-box {
+            background: linear-gradient(135deg, var(--cream) 0%, #e0d4c0 100%);
+        }
+        .card:nth-child(5) .placeholder-box {
+            background: linear-gradient(135deg, #d8cbb8 0%, #b4a189 100%);
+        }
+        .card:nth-child(6) .placeholder-box {
+            background: linear-gradient(135deg, var(--sepia) 0%, #6b5845 100%);
+        }
+        .card:nth-child(7) .placeholder-box {
+            background: linear-gradient(135deg, #f0e8dc 0%, #c8b8a4 100%);
+        }
+        .card:nth-child(8) .placeholder-box {
+            background: linear-gradient(135deg, #a89478 0%, var(--sepia) 100%);
+        }
+
+        /* Footer spacer */
+        .footer-spacer {
+            height: 50vh;
+        }
+
+        /* Loading state */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.5rem;
+            color: var(--sepia);
+            letter-spacing: 0.1em;
+        }
+
+        @media (max-width: 768px) {
+            .card-inner {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem;
+            }
+
+            .product-name {
+                font-size: 2rem;
+            }
+
+            .progress-bar {
+                right: 1.5rem;
+            }
+
+            header {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ephemeral</h1>
+    </header>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="loading" id="loading">Loading collection...</div>
+
+    <div class="gallery" id="gallery"></div>
+
+    <div class="footer-spacer"></div>
+
+    <script>
+        // Fetch and render products
+        async function loadProducts() {
+            try {
+                const response = await fetch('/gallery/manifest.json');
+                const data = await response.json();
+
+                const gallery = document.getElementById('gallery');
+                const loading = document.getElementById('loading');
+                const progressBar = document.getElementById('progressBar');
+
+                // Create cards
+                data.products.forEach((product, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.dataset.index = index;
+
+                    card.innerHTML = `
+                        <div class="card-inner">
+                            <div class="card-image">
+                                <div class="placeholder-box">
+                                    ${String(index + 1).padStart(2, '0')}
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <div class="brand">${product.brand || 'Artisan Collective'}</div>
+                                <h2 class="product-name">${product.name}</h2>
+                                <div class="price">$${product.price.toFixed(2)}</div>
+                                <p class="description">
+                                    ${product.description || 'A carefully curated piece from our collection, embodying timeless elegance and refined craftsmanship.'}
+                                </p>
+                                <button class="view-button">View Details</button>
+                            </div>
+                        </div>
+                    `;
+
+                    gallery.appendChild(card);
+                });
+
+                // Create progress dots
+                data.products.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.className = 'progress-dot';
+                    dot.dataset.index = index;
+                    progressBar.appendChild(dot);
+                });
+
+                loading.style.display = 'none';
+
+                // Initialize scroll observer
+                initScrollObserver();
+            } catch (error) {
+                console.error('Error loading products:', error);
+                document.getElementById('loading').textContent = 'Error loading collection';
+            }
+        }
+
+        // Scroll observer for progress and exit animations
+        function initScrollObserver() {
+            const cards = document.querySelectorAll('.card');
+            const dots = document.querySelectorAll('.progress-dot');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const index = parseInt(entry.target.dataset.index);
+
+                    if (entry.isIntersecting) {
+                        // Update progress
+                        dots.forEach(dot => dot.classList.remove('active'));
+                        if (dots[index]) {
+                            dots[index].classList.add('active');
+                        }
+
+                        // Remove exiting class when card comes into view
+                        entry.target.classList.remove('exiting');
+                    } else if (entry.boundingClientRect.top < 0) {
+                        // Add exiting class when scrolling past
+                        entry.target.classList.add('exiting');
+                    }
+                });
+            }, {
+                threshold: [0, 0.5, 1],
+                rootMargin: '-15% 0px -15% 0px'
+            });
+
+            cards.forEach(card => observer.observe(card));
+        }
+
+        // Load products on page load
+        loadProducts();
+    </script>
+</body>
+</html>

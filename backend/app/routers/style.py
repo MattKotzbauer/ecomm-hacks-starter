@@ -71,7 +71,7 @@ async def style_chat(
 
         # Load and fill the prompt template
         prompt = load_and_fill_prompt(
-            "style",
+            "base_style",
             current_card_theme=card_theme_str,
             current_canvas_theme=canvas_theme_str,
             current_physics=physics_str,

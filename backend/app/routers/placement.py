@@ -105,6 +105,53 @@ def get_gemini_service(request: Request) -> GeminiService:
     return service
 
 
+def build_products_xml(products: list) -> str:
+    """Build XML representation of products with advertiser targeting preferences.
+
+    Args:
+        products: List of ProductInfo objects
+
+    Returns:
+        XML string containing product info and targeting preferences
+    """
+    product_xmls = []
+    for p in products:
+        # Build targeting section if any preferences exist
+        targeting_lines = []
+        if p.target_demographics:
+            targeting_lines.append(
+                f"    <demographics>{', '.join(p.target_demographics)}</demographics>"
+            )
+        if p.target_interests:
+            targeting_lines.append(
+                f"    <interests>{', '.join(p.target_interests)}</interests>"
+            )
+        if p.scene_preferences:
+            targeting_lines.append(
+                f"    <scenes>{', '.join(p.scene_preferences)}</scenes>"
+            )
+        if p.semantic_filter:
+            targeting_lines.append(f"    <semantic>{p.semantic_filter}</semantic>")
+
+        # Build product XML
+        targeting_section = ""
+        if targeting_lines:
+            targeting_section = (
+                "\n  <targeting>\n" + "\n".join(targeting_lines) + "\n  </targeting>"
+            )
+
+        product_xml = (
+            f'<product id="{p.id}" brand="{p.brand}">\n'
+            f"  <name>{p.name}</name>\n"
+            f"  <description>{p.description or 'Luxury product'}</description>"
+            f"{targeting_section}\n"
+            f"</product>"
+        )
+        product_xmls.append(product_xml)
+
+    return "\n".join(product_xmls)
+
+
 # === API 1: Generate Scene Descriptions ===
 # Prompt loaded from: prompts/base_placement_scenes.md
 
@@ -326,15 +373,26 @@ def parse_selection_xml(text: str, scene_id: str) -> ProductSelection:
     product_id_match = re.search(r"<product_id>(.*?)</product_id>", text, re.DOTALL)
     placement_match = re.search(r"<placement>(.*?)</placement>", text, re.DOTALL)
     rationale_match = re.search(r"<rationale>(.*?)</rationale>", text, re.DOTALL)
+    match_score_match = re.search(r"<match_score>(.*?)</match_score>", text, re.DOTALL)
 
     if not all([product_id_match, placement_match, rationale_match]):
         raise ValueError("Failed to parse product selection XML")
+
+    # Parse match_score, default to 5 if not found or invalid
+    match_score = 5
+    if match_score_match:
+        try:
+            match_score = int(match_score_match.group(1).strip())
+            match_score = max(1, min(10, match_score))  # Clamp to 1-10
+        except ValueError:
+            pass
 
     return ProductSelection(
         scene_id=scene_id,
         selected_product_id=product_id_match.group(1).strip(),
         placement_hint=placement_match.group(1).strip(),
         rationale=rationale_match.group(1).strip(),
+        match_score=match_score,
     )
 
 
@@ -344,9 +402,14 @@ async def select_product_for_image(
     image_data: str,
     mime_type: str,
     products_xml: str,
+    writing_context: str = "",
 ) -> ProductSelection:
-    """Select a product for a single image."""
-    prompt = load_and_fill_prompt("base_placement_select", products_xml=products_xml)
+    """Select a product for a single image, considering advertiser targeting."""
+    prompt = load_and_fill_prompt(
+        "base_placement_select",
+        products_xml=products_xml,
+        writing_context=writing_context or "(No writing context provided)",
+    )
 
     # Use multimedia query to send image + text
     result = await gemini.multimedia_query(
@@ -387,14 +450,8 @@ async def select_products(
         product_count=len(request.products),
     )
 
-    # Build products XML
-    products_xml = "\n".join(
-        f'<product id="{p.id}" brand="{p.brand}">\n'
-        f"  <name>{p.name}</name>\n"
-        f"  <description>{p.description or 'Luxury product'}</description>\n"
-        f"</product>"
-        for p in request.products
-    )
+    # Build products XML with targeting preferences
+    products_xml = build_products_xml(request.products)
 
     try:
         tasks = [
@@ -404,6 +461,7 @@ async def select_products(
                 img.image_data,
                 img.mime_type,
                 products_xml,
+                request.writing_context,
             )
             for img in request.images
         ]
@@ -442,7 +500,7 @@ async def select_products(
 
 
 # === API 4: Batch Image Composition ===
-# Prompts loaded from: prompts/base_placement_compose.md, prompts/base_base_placement_compose_with_reference.md
+# Prompt loaded from: prompts/base_placement_compose.md
 
 
 async def compose_single_image(
@@ -452,22 +510,13 @@ async def compose_single_image(
     """Compose a product into a single scene image."""
     from app.models.placement import CompositionTask
 
-    # Build prompt based on whether we have a reference image
-    if task.product_image:
-        prompt = load_and_fill_prompt(
-            "base_base_placement_compose_with_reference",
-            product_brand=task.product.brand,
-            product_name=task.product.name,
-            placement_hint=task.placement_hint,
-        )
-    else:
-        prompt = load_and_fill_prompt(
-            "base_placement_compose",
-            product_brand=task.product.brand,
-            product_name=task.product.name,
-            product_description=task.product.description or "",
-            placement_hint=task.placement_hint,
-        )
+    # Build prompt - expects product image as reference
+    prompt = load_and_fill_prompt(
+        "base_placement_compose",
+        product_brand=task.product.brand,
+        product_name=task.product.name,
+        placement_hint=task.placement_hint,
+    )
 
     # Decode scene image
     scene_bytes = base64.b64decode(task.scene_image)
@@ -754,29 +803,48 @@ async def run_pipeline(
 
         # === Step 3: Select Products (parallel) ===
         step_start = time.time()
-        products_xml = "\n".join(
-            f'<product id="{p.id}" brand="{p.brand}">\n'
-            f"  <name>{p.name}</name>\n"
-            f"  <description>{p.description or 'Luxury product'}</description>\n"
-            f"</product>"
-            for p in request.products
-        )
+        products_xml = build_products_xml(request.products)
 
         selection_tasks = [
             select_product_for_image(
-                gemini, img.scene_id, img.image_data, img.mime_type, products_xml
+                gemini,
+                img.scene_id,
+                img.image_data,
+                img.mime_type,
+                products_xml,
+                request.writing_context,
             )
             for img in images
         ]
         selection_results = await asyncio.gather(*selection_tasks, return_exceptions=True)
 
-        selections = [s for s in selection_results if not isinstance(s, Exception)]
+        # Filter out exceptions and "NONE" selections (no good audience match)
+        all_selections = [s for s in selection_results if not isinstance(s, Exception)]
+        selections = [s for s in all_selections if s.selected_product_id.upper() != "NONE"]
+        skipped_count = len(all_selections) - len(selections)
+
+        if skipped_count > 0:
+            logger.info(
+                "placement_pipeline_skipped_mismatches",
+                skipped=skipped_count,
+                reason="No matching product for audience",
+            )
+
         if not selections:
-            raise HTTPException(status_code=500, detail="Failed to select any products")
+            # All products were rejected - return empty but valid response
+            logger.info("placement_pipeline_no_matches", reason="No products matched audience")
+            return PipelineResponse(
+                placements=[],
+                stats={
+                    "total_elapsed": round(time.time() - pipeline_start, 3),
+                    "message": "No products matched the writer's audience",
+                },
+            )
 
         stats["steps"]["3_selections"] = {
             "elapsed": round(time.time() - step_start, 3),
             "count": len(selections),
+            "skipped_mismatches": skipped_count,
         }
         logger.info("placement_pipeline_step3_done", selection_count=len(selections))
 

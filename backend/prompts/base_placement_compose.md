@@ -1,6 +1,9 @@
-Edit this lifestyle scene to naturally include the {product_brand} {product_name}.
-{product_description}
+Edit the FIRST image (lifestyle scene) to naturally include the product shown in the SECOND image.
+This is a {product_brand} {product_name}.
 Place the product {placement_hint}.
-Maintain the original lighting, atmosphere, and style.
-The product should look like it belongs in the scene, not pasted on.
-Make the edit seamless and professional.
+IMPORTANT:
+- Use the EXACT product from the second image - match its shape, color, details, and branding precisely
+- Integrate it seamlessly into the first image's lighting, shadows, and atmosphere
+- The product should look like it was photographed in the scene, not composited
+- Maintain the original scene's style and composition
+- Output the image at the SAME resolution and dimensions as the first input image

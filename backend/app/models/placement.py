@@ -21,6 +21,11 @@ class ProductInfo(BaseModel):
     brand: str
     description: str | None = None
     image_url: str | None = None
+    # Advertiser targeting preferences
+    target_demographics: list[str] = []  # e.g. ["18-24", "25-34", "35-44", "45+"]
+    target_interests: list[str] = []  # e.g. ["Fashion", "Luxury", "Art", "Travel"]
+    scene_preferences: list[str] = []  # e.g. ["Interior", "Café", "Boutique"]
+    semantic_filter: str | None = None  # e.g. "warm lighting, sophisticated settings"
 
 
 # === API 1: Scene Generation ===
@@ -104,15 +109,17 @@ class SelectProductsRequest(BaseModel):
 
     images: list[ImageForSelection]
     products: list[ProductInfo]
+    writing_context: str = ""  # Writer's context for audience matching
 
 
 class ProductSelection(BaseModel):
     """Product selection result for one image."""
 
     scene_id: str
-    selected_product_id: str
+    selected_product_id: str  # "NONE" if no good match
     placement_hint: str
     rationale: str
+    match_score: int = 5  # 1-10 confidence score for audience match
 
 
 class SelectProductsResponse(BaseModel):

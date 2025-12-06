@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ephemeral - Infinite Drift</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #FAF8F3;
+            --sepia: #8b7355;
+            --pencil: #4a4a48;
+            --shadow: rgba(74, 74, 72, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            color: var(--pencil);
+            overflow-x: hidden;
+            min-height: 400vh; /* Allow for scrolling */
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem 3rem;
+            z-index: 100;
+            background: linear-gradient(to bottom, var(--cream) 0%, var(--cream) 70%, transparent 100%);
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-weight: 300;
+            font-size: 2.5rem;
+            letter-spacing: 0.05em;
+            color: var(--sepia);
+            opacity: 0.85;
+        }
+
+        .gallery {
+            position: relative;
+            padding-top: 10rem;
+            min-height: 100vh;
+        }
+
+        .card {
+            position: absolute;
+            width: 320px;
+            background: white;
+            border-radius: 2px;
+            overflow: hidden;
+            will-change: transform;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 16px 48px rgba(74, 74, 72, 0.18) !important;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 420px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-gradient {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            background: white;
+        }
+
+        .brand {
+            font-family: 'Crimson Pro', serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--sepia);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-name {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: var(--pencil);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .price {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--sepia);
+            font-weight: 500;
+        }
+
+        /* Gradient palette for placeholder boxes */
+        .gradient-1 {
+            background: linear-gradient(135deg, #e8d5c4 0%, #c9b5a0 100%);
+        }
+        .gradient-2 {
+            background: linear-gradient(135deg, #d4c5b9 0%, #a89985 100%);
+        }
+        .gradient-3 {
+            background: linear-gradient(135deg, #f5ebe0 0%, #e4d5c9 100%);
+        }
+        .gradient-4 {
+            background: linear-gradient(135deg, #c9b8a8 0%, #9d8b7a 100%);
+        }
+        .gradient-5 {
+            background: linear-gradient(135deg, #ede3d8 0%, #d9cfc4 100%);
+        }
+        .gradient-6 {
+            background: linear-gradient(135deg, #b8a697 0%, #8b7355 100%);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Ephemeral</h1>
+    </header>
+
+    <div class="gallery" id="gallery">
+        <!-- Cards will be inserted here -->
+    </div>
+
+    <script>
+        // Gradient classes for rotation
+        const gradients = ['gradient-1', 'gradient-2', 'gradient-3', 'gradient-4', 'gradient-5', 'gradient-6'];
+
+        // Load products
+        fetch('/gallery/manifest.json')
+            .then(res => res.json())
+            .then(data => {
+                const products = data.products || [];
+                const gallery = document.getElementById('gallery');
+
+                products.forEach((product, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+
+                    // Random horizontal position (10% to 75% to avoid edges)
+                    const randomX = 10 + Math.random() * 65;
+
+                    // Vertical spacing based on index
+                    const baseY = 100 + index * 600;
+                    const randomYOffset = (Math.random() - 0.5) * 200;
+                    const y = baseY + randomYOffset;
+
+                    // Store initial position and drift parameters
+                    card.dataset.baseTop = y;
+                    card.dataset.baseLeft = randomX;
+                    card.dataset.driftAmplitude = 50 + Math.random() * 100; // Random drift distance
+                    card.dataset.driftFrequency = 0.0005 + Math.random() * 0.001; // Random drift speed
+                    card.dataset.rotateAmplitude = 2 + Math.random() * 6; // Random rotation amount (2-8 degrees)
+                    card.dataset.index = index;
+
+                    // Initial position
+                    card.style.top = `${y}px`;
+                    card.style.left = `${randomX}%`;
+
+                    // Random gradient
+                    const gradientClass = gradients[index % gradients.length];
+
+                    card.innerHTML = `
+                        <div class="card-image">
+                            <div class="card-gradient ${gradientClass}"></div>
+                        </div>
+                        <div class="card-content">
+                            <div class="brand">${product.brand || 'Unknown'}</div>
+                            <div class="product-name">${product.name || 'Untitled'}</div>
+                            <div class="price">$${product.price || '0'}</div>
+                        </div>
+                    `;
+
+                    gallery.appendChild(card);
+                });
+
+                // Initialize scroll effects
+                updateCards();
+            })
+            .catch(err => {
+                console.error('Error loading products:', err);
+            });
+
+        // Update card transforms based on scroll position
+        function updateCards() {
+            const scrollY = window.scrollY;
+            const cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                const baseTop = parseFloat(card.dataset.baseTop);
+                const baseLeft = parseFloat(card.dataset.baseLeft);
+                const driftAmplitude = parseFloat(card.dataset.driftAmplitude);
+                const driftFrequency = parseFloat(card.dataset.driftFrequency);
+                const rotateAmplitude = parseFloat(card.dataset.rotateAmplitude);
+                const index = parseInt(card.dataset.index);
+
+                // Calculate drift based on scroll position (sine wave)
+                const driftX = Math.sin(scrollY * driftFrequency + index) * driftAmplitude;
+
+                // Calculate rotation based on scroll position
+                // Each card rotates differently based on its position and index
+                const rotationPhase = scrollY * 0.002 + index * 0.5;
+                const rotation = Math.sin(rotationPhase) * rotateAmplitude;
+
+                // Calculate shadow offset based on rotation
+                const shadowX = rotation * 2;
+                const shadowY = 8 + Math.abs(rotation) * 2;
+                const shadowBlur = 24 + Math.abs(rotation) * 3;
+
+                // Apply transforms
+                card.style.transform = `translateX(${driftX}px) rotate(${rotation}deg)`;
+                card.style.boxShadow = `${shadowX}px ${shadowY}px ${shadowBlur}px var(--shadow)`;
+            });
+
+            requestAnimationFrame(updateCards);
+        }
+    </script>
+</body>
+</html>

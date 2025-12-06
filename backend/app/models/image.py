@@ -24,6 +24,7 @@ class GeneratedImage(BaseModel):
 
     data: str = Field(..., description="Base64-encoded image data")
     mime_type: str = Field(..., description="MIME type (e.g., image/png)")
+    file_path: str | None = Field(None, description="Saved file path (auto-saved to disk)")
 
 
 class ImageResponse(BaseModel):

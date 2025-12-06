@@ -5,6 +5,7 @@ import time
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import FileResponse
 
 from app.models.image import (
     GeneratedImage,
@@ -13,6 +14,7 @@ from app.models.image import (
     ImageResponse,
 )
 from app.services.gemini import GeminiService
+from app.services.generation_store import save_generation, list_generation_logs, get_image_path
 from app.services.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -52,18 +54,42 @@ async def generate_image(
             model=model_name,
         )
 
+        # AUTO-SAVE: Save all generated images and log the generation
+        save_result = save_generation(
+            endpoint="/api/image/generate",
+            prompt=request.prompt,
+            response_text=result.text,
+            images_base64=[{"data": img["data"], "mime_type": img["mime_type"]} for img in result.images],
+            metadata={
+                "model": result.model,
+                "usage": result.usage,
+            },
+        )
+
+        # Extract saved paths from the result
+        saved_paths = [p["path"] if p else None for p in save_result["image_paths"]]
+
         elapsed = time.time() - start_time
         logger.info(
             "image_generate_completed",
             model=result.model,
             elapsed_seconds=round(elapsed, 3),
             image_count=len(result.images),
+            saved_paths=saved_paths,
+            generation_id=save_result["generation_id"],
             usage=result.usage,
         )
 
         return ImageResponse(
             text=result.text,
-            images=[GeneratedImage(data=img["data"], mime_type=img["mime_type"]) for img in result.images],
+            images=[
+                GeneratedImage(
+                    data=img["data"],
+                    mime_type=img["mime_type"],
+                    file_path=saved_paths[i] if i < len(saved_paths) else None
+                )
+                for i, img in enumerate(result.images)
+            ],
             model=result.model,
             usage=result.usage,
         )
@@ -110,18 +136,43 @@ async def edit_image(
             model=model_name,
         )
 
+        # AUTO-SAVE: Save all edited images and log the generation
+        save_result = save_generation(
+            endpoint="/api/image/edit",
+            prompt=request.prompt,
+            response_text=result.text,
+            images_base64=[{"data": img["data"], "mime_type": img["mime_type"]} for img in result.images],
+            metadata={
+                "model": result.model,
+                "input_mime_type": request.mime_type,
+                "usage": result.usage,
+            },
+        )
+
+        # Extract saved paths from the result
+        saved_paths = [p["path"] if p else None for p in save_result["image_paths"]]
+
         elapsed = time.time() - start_time
         logger.info(
             "image_edit_completed",
             model=result.model,
             elapsed_seconds=round(elapsed, 3),
             image_count=len(result.images),
+            saved_paths=saved_paths,
+            generation_id=save_result["generation_id"],
             usage=result.usage,
         )
 
         return ImageResponse(
             text=result.text,
-            images=[GeneratedImage(data=img["data"], mime_type=img["mime_type"]) for img in result.images],
+            images=[
+                GeneratedImage(
+                    data=img["data"],
+                    mime_type=img["mime_type"],
+                    file_path=saved_paths[i] if i < len(saved_paths) else None
+                )
+                for i, img in enumerate(result.images)
+            ],
             model=result.model,
             usage=result.usage,
         )
@@ -151,3 +202,26 @@ async def list_image_models():
             },
         ]
     }
+
+
+@router.get("/saved")
+async def list_saved():
+    """List all saved generation logs (includes images and text)."""
+    logs = list_generation_logs()
+    return {"generations": logs, "count": len(logs)}
+
+
+@router.get("/saved/{date}/{filename}")
+async def get_saved_image(date: str, filename: str):
+    """Serve a saved image file.
+
+    Args:
+        date: Date folder (YYYY-MM-DD)
+        filename: Image filename (e.g., img_143022_a1b2c3.png)
+    """
+    filepath = get_image_path(date, filename)
+    if not filepath:
+        raise HTTPException(status_code=404, detail="Image not found")
+
+    mime = "image/png" if filepath.suffix == ".png" else "image/jpeg" if filepath.suffix in (".jpg", ".jpeg") else "image/webp"
+    return FileResponse(filepath, media_type=mime)

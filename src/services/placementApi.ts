@@ -65,6 +65,11 @@ export interface ProductInfo {
   brand: string
   description?: string
   image_url?: string
+  // Advertiser targeting preferences
+  target_demographics?: string[]  // e.g. ["18-24", "25-34", "35-44", "45+"]
+  target_interests?: string[]     // e.g. ["Fashion", "Luxury", "Art", "Travel"]
+  scene_preferences?: string[]    // e.g. ["Interior", "Café", "Boutique"]
+  semantic_filter?: string        // e.g. "warm lighting, sophisticated settings"
 }
 
 // API 1: Scene Generation
@@ -125,13 +130,15 @@ export interface ImageForSelection {
 export interface SelectProductsRequest {
   images: ImageForSelection[]
   products: ProductInfo[]
+  writing_context?: string  // Writer's context for audience matching
 }
 
 export interface ProductSelection {
   scene_id: string
-  selected_product_id: string
+  selected_product_id: string  // "NONE" if no good match
   placement_hint: string
   rationale: string
+  match_score: number  // 1-10 confidence score for audience match
 }
 
 export interface SelectProductsResponse {
@@ -324,10 +331,11 @@ export interface PipelineRequest {
 export interface PipelineStats {
   total_elapsed: number
   placements_generated: number
-  steps: {
+  message?: string  // e.g. "No products matched the writer's audience"
+  steps?: {
     '1_scenes': { elapsed: number; count: number }
     '2_images': { elapsed: number; count: number }
-    '3_selections': { elapsed: number; count: number }
+    '3_selections': { elapsed: number; count: number; skipped_mismatches?: number }
     '4_compose': { elapsed: number; count: number }
     '5_masks': { elapsed: number; count: number }
   }
@@ -361,5 +369,57 @@ export async function runPipeline(request: PipelineRequest): Promise<PipelineRes
     return handleResponse<PipelineResponse>(response, 'Pipeline')
   } catch (error) {
     throw handleNetworkError(error, 'Pipeline')
+  }
+}
+
+
+// === Products Save API ===
+
+export interface ProductTargetingData {
+  demographics: string[]
+  interests: string[]
+  scenes: string[]
+  semantic?: string
+}
+
+export interface ProductData {
+  id: string
+  name: string
+  img: string
+  description?: string
+  targeting?: ProductTargetingData
+}
+
+export interface CollectionData {
+  id: string
+  name: string
+  displayName: string
+  products: ProductData[]
+}
+
+export interface ProductsData {
+  collections: CollectionData[]
+}
+
+export interface SaveProductsResponse {
+  success: boolean
+  message: string
+  collection_count: number
+  product_count: number
+}
+
+/**
+ * Save products to the server (persists changes to products.json).
+ */
+export async function saveProducts(data: ProductsData): Promise<SaveProductsResponse> {
+  try {
+    const response = await fetch(`${API_BASE}/api/products/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    return handleResponse<SaveProductsResponse>(response, 'Save products')
+  } catch (error) {
+    throw handleNetworkError(error, 'Save products')
   }
 }

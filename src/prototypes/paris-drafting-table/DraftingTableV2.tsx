@@ -170,8 +170,8 @@ export default function DraftingTableV2() {
   // URL to base64 helper
   const urlToBase64 = async (url: string): Promise<{ base64: string; mimeType: string }> => {
     if (url.startsWith('data:')) {
-      const mimeType = url.split(';')[0].split(':')[1]
-      const base64 = url.split(',')[1]
+      const mimeType = url.split(';')[0]?.split(':')[1] ?? 'image/jpeg'
+      const base64 = url.split(',')[1] ?? ''
       return { base64, mimeType }
     }
 
@@ -183,7 +183,7 @@ export default function DraftingTableV2() {
       const reader = new FileReader()
       reader.onloadend = () => {
         const dataUrl = reader.result as string
-        const base64 = dataUrl.split(',')[1]
+        const base64 = dataUrl.split(',')[1] ?? ''
         resolve({ base64, mimeType })
       }
       reader.onerror = reject
@@ -224,6 +224,7 @@ export default function DraftingTableV2() {
     // Process cells sequentially (to avoid rate limits)
     for (let i = 0; i < cells.length; i++) {
       const cell = cells[i]
+      if (!cell) continue
 
       // Update status to generating
       setMatrix(prev => prev.map(c =>

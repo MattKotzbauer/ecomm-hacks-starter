@@ -25,7 +25,7 @@ const localStorageMock = {
     Object.keys(mockStorage).forEach((key) => delete mockStorage[key])
   }),
 }
-Object.defineProperty(global, 'localStorage', { value: localStorageMock })
+Object.defineProperty(globalThis, 'localStorage', { value: localStorageMock })
 
 describe('Session Cost Tracking', () => {
   const mockState: CanvasState = {

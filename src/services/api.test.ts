@@ -12,7 +12,7 @@ describe('Canvas API Client', () => {
   const mockFetch = vi.fn()
 
   beforeEach(() => {
-    global.fetch = mockFetch
+    globalThis.fetch = mockFetch
   })
 
   afterEach(() => {

@@ -104,7 +104,7 @@ export function AdvertiserConsole() {
       const reader = new FileReader()
       reader.onloadend = () => {
         const dataUrl = reader.result as string
-        const base64 = dataUrl.split(',')[1]
+        const base64 = dataUrl.split(',')[1] ?? ''
         resolve({ base64, mimeType })
       }
       reader.onerror = reject

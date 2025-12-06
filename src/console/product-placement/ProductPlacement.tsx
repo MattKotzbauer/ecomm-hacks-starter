@@ -108,7 +108,7 @@ export default function ProductPlacement() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<'select' | 'matrix' | 'coverage'>('select')
-  const [cacheVersion, setCacheVersion] = useState(0)
+  const [_cacheVersion, setCacheVersion] = useState(0)
 
   const productInputRef = useRef<HTMLInputElement>(null)
   const aestheticInputRef = useRef<HTMLInputElement>(null)
@@ -225,8 +225,8 @@ export default function ProductPlacement() {
   // URL to base64
   const urlToBase64 = async (url: string): Promise<{ base64: string; mimeType: string }> => {
     if (url.startsWith('data:')) {
-      const mimeType = url.split(';')[0].split(':')[1]
-      const base64 = url.split(',')[1]
+      const mimeType = url.split(';')[0]?.split(':')[1] ?? 'image/jpeg'
+      const base64 = url.split(',')[1] ?? ''
       return { base64, mimeType }
     }
 
@@ -238,7 +238,7 @@ export default function ProductPlacement() {
       const reader = new FileReader()
       reader.onloadend = () => {
         const dataUrl = reader.result as string
-        const base64 = dataUrl.split(',')[1]
+        const base64 = dataUrl.split(',')[1] ?? ''
         resolve({ base64, mimeType })
       }
       reader.onerror = reject

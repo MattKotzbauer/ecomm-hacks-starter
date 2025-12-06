@@ -95,7 +95,7 @@ class PlacementCacheService {
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readwrite')
-      const store = tx.objectStore(tx.objectStoreNames[0])
+      const store = tx.objectStore(STORE_NAME)
 
       const request = store.put(placement)
       request.onsuccess = () => resolve()
@@ -109,7 +109,7 @@ class PlacementCacheService {
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readonly')
-      const store = tx.objectStore(tx.objectStoreNames[0])
+      const store = tx.objectStore(STORE_NAME)
       const index = store.index('cacheKey')
 
       const request = index.get(cacheKey)
@@ -137,7 +137,7 @@ class PlacementCacheService {
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readonly')
-      const store = tx.objectStore(tx.objectStoreNames[0])
+      const store = tx.objectStore(STORE_NAME)
 
       const request = store.getAll()
       request.onsuccess = () => resolve(request.result || [])
@@ -161,7 +161,7 @@ class PlacementCacheService {
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readwrite')
-      const store = tx.objectStore(tx.objectStoreNames[0])
+      const store = tx.objectStore(STORE_NAME)
 
       const request = store.delete(id)
       request.onsuccess = () => resolve()
@@ -175,7 +175,7 @@ class PlacementCacheService {
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readwrite')
-      const store = tx.objectStore(tx.objectStoreNames[0])
+      const store = tx.objectStore(STORE_NAME)
 
       const request = store.clear()
       request.onsuccess = () => resolve()
@@ -189,7 +189,7 @@ class PlacementCacheService {
 
     return new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readonly')
-      const store = tx.objectStore(tx.objectStoreNames[0])
+      const store = tx.objectStore(STORE_NAME)
 
       const request = store.count()
       request.onsuccess = () => resolve(request.result)

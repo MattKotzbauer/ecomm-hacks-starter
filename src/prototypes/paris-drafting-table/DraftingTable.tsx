@@ -86,6 +86,7 @@ export default function DraftingTable() {
 
     for (let i = 0; i < products.length; i++) {
       const product = products[i]
+      if (!product) continue
       setGenerationProgress({ current: i + 1, total: products.length })
 
       try {
@@ -109,12 +110,12 @@ export default function DraftingTable() {
         if (data.images && data.images.length > 0) {
           const imageUrl = `data:${data.images[0].mime_type};base64,${data.images[0].data}`
           updatedProducts.push({ ...product, imageUrl })
-        } else {
+        } else if (product) {
           updatedProducts.push(product)
         }
       } catch (err) {
-        console.error(`Failed to generate image for ${product.name}:`, err)
-        updatedProducts.push(product)
+        console.error(`Failed to generate image for ${product?.name}:`, err)
+        if (product) updatedProducts.push(product)
       }
     }
 
@@ -126,13 +127,15 @@ export default function DraftingTable() {
   const generateAestheticImages = useCallback(async () => {
     setIsGeneratingAesthetics(true)
     setError(null)
-    setGenerationProgress({ current: 0, total: AESTHETIC_PROMPTS.length })
+    const prompts = PRELOADED_AESTHETICS.map(a => a.description)
+    setGenerationProgress({ current: 0, total: prompts.length })
 
     const images: AestheticImage[] = []
 
-    for (let i = 0; i < AESTHETIC_PROMPTS.length; i++) {
-      const prompt = AESTHETIC_PROMPTS[i]
-      setGenerationProgress({ current: i + 1, total: AESTHETIC_PROMPTS.length })
+    for (let i = 0; i < prompts.length; i++) {
+      const prompt = prompts[i]
+      if (!prompt) continue
+      setGenerationProgress({ current: i + 1, total: prompts.length })
 
       try {
         const response = await fetch(`${API_BASE}/api/image/generate`, {
@@ -170,8 +173,8 @@ export default function DraftingTable() {
   const urlToBase64 = async (url: string): Promise<{ base64: string; mimeType: string }> => {
     // If already a data URL, extract parts
     if (url.startsWith('data:')) {
-      const mimeType = url.split(';')[0].split(':')[1]
-      const base64 = url.split(',')[1]
+      const mimeType = url.split(';')[0]?.split(':')[1] ?? 'image/jpeg'
+      const base64 = url.split(',')[1] ?? ''
       return { base64, mimeType }
     }
 
@@ -184,7 +187,7 @@ export default function DraftingTable() {
       const reader = new FileReader()
       reader.onloadend = () => {
         const dataUrl = reader.result as string
-        const base64 = dataUrl.split(',')[1]
+        const base64 = dataUrl.split(',')[1] ?? ''
         resolve({ base64, mimeType })
       }
       reader.onerror = reject

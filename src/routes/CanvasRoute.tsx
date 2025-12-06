@@ -29,7 +29,7 @@ export function CanvasRoute() {
 
   // Track current state for auto-save
   const currentStateRef = useRef<CanvasState | null>(null)
-  const autoSaveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const autoSaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Load config and session on mount
   useEffect(() => {

@@ -1,9 +1,6 @@
 /**
  * PasswordGate - Protects routes with a password
  *
- * Password is verified server-side via /api/auth/verify
- * Set SITE_PASSWORD environment variable in Vercel
- *
  * Two themes available:
  * - "dark": Moody, luxurious dark theme (for consumer page)
  * - "warm": Cream/gold warm theme (for advertiser page)
@@ -13,6 +10,7 @@ import { useState, type ReactNode } from 'react'
 import './PasswordGate.css'
 
 const STORAGE_KEY = 'pw_authenticated'
+const CORRECT_PASSWORD = 'reverie44'
 
 interface PasswordGateProps {
   children: ReactNode
@@ -33,38 +31,20 @@ export function PasswordGate({
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
   const [isShaking, setIsShaking] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
     setError(false)
 
-    try {
-      const response = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        sessionStorage.setItem(STORAGE_KEY, 'true')
-        setIsAuthenticated(true)
-      } else {
-        setError(true)
-        setIsShaking(true)
-        setTimeout(() => setIsShaking(false), 500)
-        setPassword('')
-      }
-    } catch {
+    if (password === CORRECT_PASSWORD) {
+      sessionStorage.setItem(STORAGE_KEY, 'true')
+      setIsAuthenticated(true)
+    } else {
       setError(true)
       setIsShaking(true)
       setTimeout(() => setIsShaking(false), 500)
       setPassword('')
-    } finally {
-      setIsLoading(false)
     }
   }
 

@@ -31,7 +31,15 @@ export const router = createBrowserRouter([
   },
   {
     path: '/console',
-    element: <Console />,
+    element: (
+      <PasswordGate
+        theme="warm"
+        title="Advertiser Console"
+        subtitle="Enter password to access the campaign tools"
+      >
+        <Console />
+      </PasswordGate>
+    ),
   },
   {
     path: '/console/matrix',
@@ -39,15 +47,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/advertiser',
-    element: (
-      <PasswordGate
-        theme="warm"
-        title="Advertiser Console"
-        subtitle="Enter password to access the campaign tools"
-      >
-        <AdvertiserConsole />
-      </PasswordGate>
-    ),
+    element: <AdvertiserConsole />,
   },
   {
     path: '/consumer',

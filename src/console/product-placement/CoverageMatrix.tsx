@@ -16,7 +16,7 @@ import {
 } from '../services/placementCache'
 import './CoverageMatrix.css'
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 interface Product {
   id: string

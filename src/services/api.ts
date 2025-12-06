@@ -2,10 +2,8 @@
  * Canvas API client for communicating with the backend.
  */
 
-// API base URL - always use backend directly
-// In dev/preview: use localhost:8000
-// In production: use relative path (assumes same-origin deployment or proxy)
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// API base URL - uses Vercel serverless functions in production
+const API_BASE = import.meta.env.VITE_API_URL || ''
 
 // --- Custom Error Types ---
 

@@ -69,7 +69,7 @@ class handler(BaseHTTPRequestHandler):
                 )
 
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash-preview-05-20",
+                    model="gemini-2.0-flash-exp",
                     contents=prompt,
                     config=config,
                 )

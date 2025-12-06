@@ -33,7 +33,7 @@ class handler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(content_length))
 
             prompt = body.get("prompt", "")
-            model = body.get("model", "gemini-2.0-flash-preview-image-generation")
+            model = body.get("model", "gemini-2.0-flash-exp")
 
             if not prompt:
                 self._send_error(400, "prompt is required")

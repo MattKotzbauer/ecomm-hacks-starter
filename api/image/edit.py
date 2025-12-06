@@ -36,7 +36,7 @@ class handler(BaseHTTPRequestHandler):
             prompt = body.get("prompt", "")
             image_b64 = body.get("image", "")
             mime_type = body.get("mime_type", "image/jpeg")
-            model = body.get("model", "gemini-2.0-flash-preview-image-generation")
+            model = body.get("model", "gemini-2.0-flash-exp")
 
             if not prompt:
                 self._send_error(400, "prompt is required")

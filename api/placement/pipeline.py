@@ -252,7 +252,7 @@ class handler(BaseHTTPRequestHandler):
             )
 
             scenes_response = client.models.generate_content(
-                model="gemini-2.5-flash-preview-05-20",
+                model="gemini-2.0-flash-exp",
                 contents=scenes_prompt,
             )
             scenes = parse_scenes_xml(scenes_response.text)
@@ -278,7 +278,7 @@ class handler(BaseHTTPRequestHandler):
 
                 config = types.GenerateContentConfig(response_modalities=["TEXT", "IMAGE"])
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash-preview-05-20",
+                    model="gemini-2.0-flash-exp",
                     contents=prompt,
                     config=config,
                 )
@@ -325,7 +325,7 @@ class handler(BaseHTTPRequestHandler):
                 contents = [types.Content(role="user", parts=parts)]
 
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash-preview-05-20",
+                    model="gemini-2.0-flash-exp",
                     contents=contents,
                 )
 
@@ -394,7 +394,7 @@ class handler(BaseHTTPRequestHandler):
                 config = types.GenerateContentConfig(response_modalities=["TEXT", "IMAGE"])
 
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash-preview-05-20",
+                    model="gemini-2.0-flash-exp",
                     contents=contents,
                     config=config,
                 )
@@ -443,7 +443,7 @@ class handler(BaseHTTPRequestHandler):
                 config = types.GenerateContentConfig(response_modalities=["TEXT", "IMAGE"])
 
                 response = client.models.generate_content(
-                    model="gemini-2.5-flash-preview-05-20",
+                    model="gemini-2.0-flash-exp",
                     contents=contents,
                     config=config,
                 )

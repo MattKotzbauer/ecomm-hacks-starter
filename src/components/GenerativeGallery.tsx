@@ -64,20 +64,6 @@ const PREGENERATED_GALLERY = [
     },
   },
   {
-    id: 'gallery-2',
-    sceneUrl: '/gallery/scene_2.png',
-    baseUrl: '/gallery/base_2.jpg',
-    maskUrl: '/gallery/mask_2.png',
-    product: {
-      id: 'product-2',
-      name: 'Classic Flap',
-      brand: 'Chanel',
-      price: 8200,
-      currency: 'USD',
-      imageUrl: '/gallery/product_2.jpg',
-    },
-  },
-  {
     id: 'gallery-3',
     sceneUrl: '/gallery/scene_3.png',
     baseUrl: '/gallery/base_3.jpg',

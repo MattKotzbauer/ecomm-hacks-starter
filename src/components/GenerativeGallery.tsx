@@ -274,9 +274,7 @@ export function GenerativeGallery({
     error: generationError,
     writingContext,
     generateBatch,
-    toggleLike,
     setWritingContext,
-    config,
   } = useGenerativePlacements({ autoLoad: false })
 
   // Cards state
@@ -445,34 +443,6 @@ export function GenerativeGallery({
     },
     []
   )
-
-  const createSkeletonCard = useCallback((y: number): ImageCard => {
-    const widthOptions = [208, 234, 260, 286]
-    const width = widthOptions[Math.floor(Math.random() * widthOptions.length)]!
-    const height = Math.floor(width * 0.9)
-
-    const columns = [12, 28, 44, 60, 76, 88]
-    let x =
-      columns[Math.floor(Math.random() * columns.length)]! +
-      (Math.random() - 0.5) * 4
-    x = Math.max(8, Math.min(92, x))
-
-    return {
-      id: `skeleton-${++cardIdCounter}`,
-      x,
-      y,
-      vx: 0,
-      vy: 0,
-      opacity: 1,
-      scale: 1,
-      spawnTime: Date.now(),
-      isHovered: false,
-      isExpanded: false,
-      width,
-      height,
-      isLoading: true,
-    }
-  }, [])
 
   // === Mask Loading ===
 
@@ -1381,18 +1351,6 @@ export function GenerativeGallery({
     }
   }, [resizingCardId, handleResizeMove, handleResizeEnd])
 
-  // === Like Handler ===
-
-  const handleLikeCard = useCallback(
-    (card: ImageCard, e: React.MouseEvent) => {
-      e.stopPropagation()
-      if (card.placement) {
-        toggleLike(card.placement.id)
-      }
-    },
-    [toggleLike]
-  )
-
   // === Shopping Handlers ===
 
   // Revert a removed product (put it back in the image)
@@ -1604,7 +1562,6 @@ export function GenerativeGallery({
 
           // Expanded card
           if (card.isExpanded) {
-            const isLiked = card.placement?.isLiked ?? false
             return (
               <div
                 key={card.id}
@@ -1664,7 +1621,6 @@ export function GenerativeGallery({
           }
 
           // Regular card
-          const isLiked = card.placement?.isLiked ?? false
           return (
             <div
               key={card.id}

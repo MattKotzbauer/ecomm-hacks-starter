@@ -63,6 +63,7 @@ export interface ProductInfo {
   id: string
   name: string
   brand: string
+  price?: number
   description?: string
   image_url?: string
   // Advertiser targeting preferences
@@ -207,6 +208,7 @@ export interface PlacementResult {
   mime_type: string
   product: ProductInfo
   placement_hint: string
+  rationale?: string
 }
 
 // --- API Functions ---

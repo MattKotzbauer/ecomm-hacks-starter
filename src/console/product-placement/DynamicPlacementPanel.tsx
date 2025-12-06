@@ -46,7 +46,6 @@ export default function DynamicPlacementPanel({
     isGenerating,
     generateBatch,
     likeScene,
-    clearPlacements,
   } = usePlacementGeneration()
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -197,7 +196,6 @@ function PlacementCard({
   onDoubleClick,
 }: PlacementCardProps) {
   const [showMask, setShowMask] = useState(false)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
   const maskImageDataRef = useRef<ImageData | null>(null)
 
   // Load mask image for hover detection

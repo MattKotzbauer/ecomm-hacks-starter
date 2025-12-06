@@ -171,7 +171,7 @@ export default function Console() {
   // Batch placement generation state
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set())
   // Track which scenes are waiting for image generation
-  const [generatingImageIds, setGeneratingImageIds] = useState<Set<string>>(new Set())
+  const [, setGeneratingImageIds] = useState<Set<string>>(new Set())
   // Track image generation progress (0-100)
   const [imageGenProgress, setImageGenProgress] = useState(0)
 

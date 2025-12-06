@@ -17,7 +17,6 @@ import {
   generateMasks,
   urlToBase64,
   type LikedScene,
-  type SceneDescription,
   type ProductInfo,
   type PlacementResult,
 } from '../../services/placementApi'

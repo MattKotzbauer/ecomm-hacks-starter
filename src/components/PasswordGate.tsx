@@ -1,6 +1,9 @@
 /**
  * PasswordGate - Protects routes with a password
  *
+ * Password is verified server-side via /api/auth/verify
+ * Set SITE_PASSWORD environment variable in Vercel
+ *
  * Two themes available:
  * - "dark": Moody, luxurious dark theme (for consumer page)
  * - "warm": Cream/gold warm theme (for advertiser page)
@@ -9,7 +12,6 @@
 import { useState, type ReactNode } from 'react'
 import './PasswordGate.css'
 
-const CORRECT_PASSWORD = 'reverie44'
 const STORAGE_KEY = 'pw_authenticated'
 
 interface PasswordGateProps {
@@ -31,18 +33,38 @@ export function PasswordGate({
   const [password, setPassword] = useState('')
   const [error, setError] = useState(false)
   const [isShaking, setIsShaking] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError(false)
 
-    if (password === CORRECT_PASSWORD) {
-      sessionStorage.setItem(STORAGE_KEY, 'true')
-      setIsAuthenticated(true)
-    } else {
+    try {
+      const response = await fetch('/api/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        sessionStorage.setItem(STORAGE_KEY, 'true')
+        setIsAuthenticated(true)
+      } else {
+        setError(true)
+        setIsShaking(true)
+        setTimeout(() => setIsShaking(false), 500)
+        setPassword('')
+      }
+    } catch {
       setError(true)
       setIsShaking(true)
       setTimeout(() => setIsShaking(false), 500)
       setPassword('')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -77,14 +99,15 @@ export function PasswordGate({
               placeholder="Password"
               className={`pw-gate__input ${error ? 'pw-gate__input--error' : ''}`}
               autoFocus
+              disabled={isLoading}
             />
             {error && (
               <span className="pw-gate__error">Incorrect password</span>
             )}
           </div>
 
-          <button type="submit" className="pw-gate__button">
-            Enter
+          <button type="submit" className="pw-gate__button" disabled={isLoading}>
+            {isLoading ? 'Verifying...' : 'Enter'}
           </button>
         </form>
       </div>
